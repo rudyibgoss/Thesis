@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{% include 'accounts/head.html' %}
+<body>
+	<script>
+		{% for m in messages  %}
+		{% if 'success' in m.tags %}
+		Swal.fire({
+		  position: 'center',
+		  icon: 'success',
+		  title: '{{m}}',
+		  showConfirmButton: false,
+		  timer: 1500
+		})
+		{% endif %}
+		{% endfor %}
+		</script>
+		<script>
+		  {% for m in messages  %}
+		  {% if 'error' in m.tags %}
+		  Swal.fire({
+			position: 'center',
+			icon: 'error',
+			title: '{{m}}',
+			showConfirmButton: false,
+			timer: 1500
+		  })
+		  {% endif %}
+		  {% endfor %}
+		  </script>
+	<div class="wrapper">
+		{% include "accounts/sidebar.html" %}
+
+		<div class="main">
+			{% include "accounts/topbar.html" %}
+			<main class="content">
+				<div class="container-fluid p-0">
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">My Affiliated Shop as Driver</h5>
+								</div>
+								<div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                              <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Affiliated Shop</th>
+                                                <th scope="col">Date Registed</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Action</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for list in drivings %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>{{list.shop_under.shop_name}}</td>
+                                                        <td>{{list.date_registered}}</td>
+                                                        <td>{% if list.status == 1 %}
+                                                            Approved
+                                                            {% elif list.status == 2%}
+                                                            Dismissed
+                                                            {% else %}
+                                                            Not Approved
+                                                        {% endif %}</td>
+                                                        <td>
+                                                            <a href="" class="btn btn-dark">Request Removal</a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                          </table>
+                                    </div>
+								</div>
+							</div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Appointments to Drive</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="mydata" class="display" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Shop </th>
+                                                    <th>Unit</th>
+                                                    <th>Date Appointments</th>
+                                                    <th>Hrs</th>
+                                                    <th>Shop Approval</th>
+                                                    <th>Drivers Approval</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for appointment in appointments %}
+                                                <tr>
+                                                    <td>{{appointment.unit_rented.shop_belong.shop_name}}</td>
+                                                    <td>{{appointment.unit_rented.categories}} {{appointment.unit_rented.model_car}}</td>
+                                                    <td>{{appointment.pick_up_unit}} - {{appointment.return_unit}}</td>
+                                                    <td>{{appointment.total_hrs}} hrs</td>
+                                                    <td>{{appointment.status}}</td>
+                                                    <td>{{appointment.drivers_approval}}</td>
+                                                    <td>
+                                                        {% if appointment.transaction_done == 1 and appointment.drivers_approval == "approved" and appointment.excess_exist == 0 %}
+                                                            <a href="{% url 'driver_payout_requests' pk=appointment.id %}" class="btn btn-sm btn-danger m-1">Payout</a>
+                                                        {% endif %}
+                                                        <a href="{% url 'mydrivingshops_details' pk=appointment.id %}" class="btn btn-sm btn-secondary m-1">Details</a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                
+                                                                                
+                                            </tbody>
+                                                                            
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+{% include 'accounts/footer.html' %}

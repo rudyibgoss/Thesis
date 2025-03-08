@@ -1,0 +1,134 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+{% include 'accounts/head.html' %}
+<body>
+	<script>
+		{% for m in messages  %}
+		{% if 'success' in m.tags %}
+		Swal.fire({
+		  position: 'center',
+		  icon: 'success',
+		  title: '{{m}}',
+		  showConfirmButton: false,
+		  timer: 1500
+		})
+		{% endif %}
+		{% endfor %}
+		</script>
+		<script>
+		  {% for m in messages  %}
+		  {% if 'error' in m.tags %}
+		  Swal.fire({
+			position: 'center',
+			icon: 'error',
+			title: '{{m}}',
+			showConfirmButton: false,
+			timer: 1500
+		  })
+		  {% endif %}
+		  {% endfor %}
+		  </script>
+	<div class="wrapper">
+		{% include "accounts/sidebar.html" %}
+
+		<div class="main">
+			{% include "accounts/topbar.html" %}
+			<main class="content">
+				<div class="container-fluid p-0">
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Welcome to Prime Car's rental {{users.fname}} {{users.lname}}  🎉</h5>
+								</div>
+								<div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-4 d-flex justify-content-center">
+                                            <img src="{% static 'public/img/car.png' %}" alt="" width="108px">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <p>Prime Cars offers top-quality car rental services, providing a wide range of well-maintained, reliable vehicles to suit your travel needs. Whether you're looking for a sleek sedan for business trips, a spacious SUV for family vacations, or a luxury vehicle for special occasions.</p>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+						</div>
+                        <div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title">Registered Shops</h5>
+								</div>
+								<div class="card-body">
+                                    <div class="row">
+                                        {% if registred_shops %}
+                                                {% for shops in registred_shops %} 
+                                                    <div class="col-1">
+                                                        <a href="{% url 'details_shops' slug=shops.slug %}">
+                                                            <img src="{{shops.logo.url}}" alt="" class="img-fluid">
+                                                        </a>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="col-12">
+                                                    <p>No Shop published</p>
+                                                </div>
+                                        {% endif %}
+
+                                    </div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="card">
+									<div class="card-header mb-0">
+										<h3 class="card-title">My Rented Cars</h3>
+									</div>
+									<div class="card-body">
+										<div class="table-responsive">
+											<table id="mydata" class="display" style="width:100%">
+												<thead>
+													<tr>
+														<th>References</th>
+														<th>Shop Name</th>
+														<th>Car Brand</th>
+														<th>Pickup and Return Time</th>
+														<th>Hourly</th>
+														<th>Total Cost</th>
+														<th>Rent Status</th>
+														<th>Details</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% for vehicles in rented_cars %}
+														<tr>
+															<td>{{vehicles.rent_id}}</td>
+															<td>{{vehicles.unit_rented.shop_belong.shop_name}}</td>
+															<td>{{vehicles.unit_rented.categories}} {{vehicles.unit_rented.model_car}}</td>
+															<td>{{vehicles.pick_up_unit}} / {{vehicles.return_unit}} ({{vehicles.total_hrs}} hrs)</td>
+															<td>₱{{ vehicles.unit_rented.rent_per_hr|floatformat:2|intcomma }}/hr</td>
+															<td>₱{{ vehicles.total_fare|floatformat:2|intcomma }}</td>
+															<td>{{vehicles.status}}</td>
+															<td>
+																<a href="{% url 'rent_details' rentid=vehicles.rent_id %}" class="btn btn-sm btn-danger">View details</a>
+																
+															</td>
+														</tr>
+													{% endfor %}                             
+												</tbody>
+																				
+											</table>
+										</div>
+									</div>
+									
+								</div>
+							</div>	
+						</div>
+					</div>
+
+				</div>
+			</main>
+{% include 'accounts/footer.html' %}
